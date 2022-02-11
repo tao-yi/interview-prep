@@ -1,21 +1,40 @@
+import { LinkedList } from "./SinglyLinkedList";
+
 // 单向链表节点
-class SllNode<T> {
+class DllNode<T> {
   public data: T;
-  public next: SllNode<T> | undefined;
+  public next: DllNode<T> | undefined;
+  public prev: DllNode<T> | undefined;
 
   constructor(data: T) {
     this.data = data;
     this.next = undefined;
+    this.prev = undefined;
   }
-}
 
-export interface LinkedList<T> {
-  addFirst(data: T): void;
-  addLast(data: T): void;
-  removeFirst(): void;
-  removeLast(): void;
-  contains(data: T): boolean;
-  remove(data: T): void;
+  addAfter(data: T) {
+    const node = new DllNode(data);
+    node.next = this.next;
+    node.prev = this;
+    this.next = node;
+    if (node.next) {
+      node.next.prev = node;
+    }
+  }
+
+  addBefore(data: T) {
+    const node = new DllNode(data);
+    node.next = this;
+    node.prev = this.prev;
+    this.prev = node;
+    if (node.prev) {
+      node.prev.next = node;
+    }
+  }
+
+  debug() {
+    console.log(`Node{${this.next?.data}, ${this.data}, ${this.prev?.data}}`);
+  }
 }
 
 /**
@@ -26,9 +45,9 @@ export interface LinkedList<T> {
  * 4. 从List尾部插入
  * 5. 从List中间插入
  */
-export class SinglyLinkedList<T> implements LinkedList<T> {
-  #head: SllNode<T> | undefined;
-  #tail: SllNode<T> | undefined;
+export class DoublyLinkedList<T> implements LinkedList<T> {
+  #head: DllNode<T> | undefined;
+  #tail: DllNode<T> | undefined;
   #size: number;
 
   constructor() {
@@ -49,20 +68,31 @@ export class SinglyLinkedList<T> implements LinkedList<T> {
     return this.#tail?.data;
   }
 
-  public debug() {
+  public printInOrder() {
     let cur = this.#head;
-    let s = "head -> ";
+    let s = "head <-> ";
     while (cur) {
-      s += `${cur.data} -> `;
+      s += `${cur.data} <-> `;
       cur = cur.next;
     }
     s += "undefined";
     console.log(s);
   }
 
+  public printPostOrder() {
+    let cur = this.#tail;
+    let s = "tail <-> ";
+    while (cur) {
+      s += `${cur.data} <-> `;
+      cur = cur.prev;
+    }
+    s += "head";
+    console.log(s);
+  }
+
   // O(1)
   public addFirst(data: T) {
-    const node = new SllNode(data);
+    const node = new DllNode(data);
     this.#size++;
     if (!this.#head) {
       this.#tail = node;
@@ -70,18 +100,20 @@ export class SinglyLinkedList<T> implements LinkedList<T> {
       return;
     }
     node.next = this.#head;
+    this.#head.prev = node;
     this.#head = node;
   }
 
   // O(1)
   public addLast(data: T) {
-    const node = new SllNode(data);
+    const node = new DllNode(data);
     this.#size++;
     if (!this.#head) {
       this.#head = node;
       this.#tail = node;
       return;
     }
+    node.prev = this.#tail;
     this.#tail!.next = node;
     this.#tail = node;
   }
@@ -102,26 +134,22 @@ export class SinglyLinkedList<T> implements LinkedList<T> {
     return tmp;
   }
 
-  // O(n)
+  // O(1)
   public removeLast() {
-    // find second last item
-    let ptr = this.#head;
-    if (!ptr) return;
+    if (!this.#tail) {
+      return;
+    }
+    this.#size--;
     if (this.#head === this.#tail) {
-      const tmp = this.#head?.data;
+      const data = this.#head.data;
       this.#head = undefined;
       this.#tail = undefined;
-      this.#size--;
-      return tmp;
+      return data;
     }
-    while (ptr.next && ptr.next.next) {
-      ptr = ptr.next;
-    }
-    const tmp = ptr.next!.data;
-    ptr.next = undefined;
-    this.#tail = ptr;
-    this.#size--;
-    return tmp;
+    const data = this.#tail.data;
+    this.#tail = this.#tail.prev;
+    this.#tail!.next = undefined;
+    return data;
   }
 
   // O(n)
@@ -137,7 +165,7 @@ export class SinglyLinkedList<T> implements LinkedList<T> {
   // O(n)
   public remove(data: T) {
     let cur = this.#head;
-    let prev: SllNode<T> | undefined = undefined;
+    let prev: DllNode<T> | undefined = undefined;
     while (cur) {
       if (cur.data === data) {
         if (cur == this.#head) {
@@ -161,7 +189,7 @@ export class SinglyLinkedList<T> implements LinkedList<T> {
     return {
       next: () => {
         if (cur) {
-          const output = { value: cur.data, done: false };
+          const output = { value: cur, done: false };
           cur = cur.next;
           return output;
         }
