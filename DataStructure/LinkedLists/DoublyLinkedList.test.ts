@@ -64,6 +64,11 @@ describe("DoublyLinkedList", () => {
     expect(list.head).toBe(6);
     expect(list.tail).toBe(9);
     expect(first).toBe(5);
+
+    const singly = new DoublyLinkedList();
+    singly.addLast(1);
+    const tmp = singly.removeFirst();
+    expect(tmp).toBe(1);
   });
 
   test("removeLast", () => {

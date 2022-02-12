@@ -123,10 +123,11 @@ export class DoublyLinkedList<T> implements LinkedList<T> {
     if (this.#size === 0) return;
     // 如果只有一个元素
     if (this.#head === this.#tail) {
+      const tmp = this.#head?.data;
       this.#head = undefined;
       this.#tail = undefined;
       this.#size--;
-      return;
+      return tmp;
     }
     const tmp = this.#head?.data;
     this.#head = this.#head!.next;
