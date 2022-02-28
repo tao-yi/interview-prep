@@ -35,25 +35,21 @@ export class MaxHeap implements Heap {
   }
 
   private heapifyDown() {
-    let pos = 0;
-    let l: number;
-    let r: number;
-    while (pos < this.#length) {
-      l = pos * 2 + 1;
-      r = pos * 2 + 2;
-      if (r < this.#length) {
-        if (this.#array[l] < this.#array[r]) {
-          this.swap(pos, r);
-          pos = r;
-        } else {
-          this.swap(pos, l);
-          pos = l;
-        }
-      } else if (l < this.#length && this.#array[l] > this.#array[pos]) {
-        this.swap(pos, l);
-        pos = l;
+    let root = 0;
+    while (root < this.#length) {
+      const l = root * 2 + 1;
+      const r = root * 2 + 2;
+      let minPos = root;
+      // compare root with its children
+      if (l < this.#length && this.#array[l] > this.#array[minPos]) {
+        minPos = l;
       }
-      break;
+      if (r < this.#length && this.#array[r] > this.#array[minPos]) {
+        minPos = r;
+      }
+      if (minPos === root) return;
+      this.swap(minPos, root);
+      root = minPos;
     }
   }
 
@@ -74,13 +70,8 @@ export class MaxHeap implements Heap {
   }
 
   insert(data: number) {
-    if (this.#length < this.#array.length - 1) {
-      this.#array[this.#length] = data;
-    } else {
-      this.#array.push(data);
-    }
-    this.#length++;
-    this.heapifyUp(this.#length - 1);
+    this.#array[this.#length] = data;
+    this.heapifyUp(this.#length++);
   }
 
   static isMaxHeap(heap: number[]) {
@@ -109,8 +100,8 @@ export class MaxHeap implements Heap {
     return heap.data;
   }
 
-  debug() {
-    console.log(this.#array, this.#length);
+  debug(prefix?: string) {
+    console.log(prefix, this.#array, this.#length);
   }
 
   get data() {

@@ -14,8 +14,6 @@ describe("MaxHeap", () => {
   heap.insert(5);
   expect(heap.length).toBe(5);
 
-  heap.debug();
-
   test("constructor", () => {
     const heap = new MaxHeap([1, 2, 3, 4, 5]);
     expect(heap.data).toEqual([5, 4, 2, 1, 3]);
