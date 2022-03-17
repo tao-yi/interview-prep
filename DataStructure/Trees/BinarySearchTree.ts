@@ -106,4 +106,38 @@ export class BinarySearchTree {
 
     return false;
   }
+
+  public delete(val: number) {
+    return this.remove(this.#root, val);
+  }
+
+  private remove(root: BSTNode | null, val: number): BSTNode | null {
+    if (root === null) return null;
+    if (root.data === val) {
+      if (root.left === null && root.right === null) {
+        return null;
+      } else if (root.left === null) {
+        return root.right;
+      } else if (root.right === null) {
+        return root.left;
+      } else {
+        const minNode = this.getMinNode(root.right);
+        root.data = minNode.data;
+        root.right = this.remove(root.right, minNode.data);
+        return root;
+      }
+    } else if (root.data < val) {
+      root.right = this.remove(root.right, val);
+    } else {
+      root.left = this.remove(root.left, val);
+    }
+    return root;
+  }
+
+  private getMinNode(root: BSTNode) {
+    while (root.left) {
+      root = root.left;
+    }
+    return root;
+  }
 }
