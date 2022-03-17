@@ -54,4 +54,18 @@ describe("BinarySearchTree", () => {
     tree.insert(32);
     expect(tree.height).toBe(5);
   });
+
+  test("delete", () => {
+    const tree = new BinarySearchTree(5);
+    tree.insert(4);
+    tree.insert(6);
+    tree.insert(15);
+    tree.insert(21);
+    tree.insert(32);
+    tree.delete(5);
+    console.log(tree.root.serialize());
+    expect(tree.root.data).toBe(6);
+    tree.delete(6);
+    expect(tree.root.data).toBe(15);
+  });
 });
