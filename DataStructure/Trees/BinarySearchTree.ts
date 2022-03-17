@@ -9,6 +9,23 @@ export class BSTNode {
     this.right = null;
   }
 
+  public serialize() {
+    const queue: Array<BSTNode | null> = [this];
+    const res: Array<Array<number | null>> = [];
+    while (queue.length) {
+      const width = queue.length;
+      const level: Array<number | null> = [];
+      for (let i = 0; i < width; i++) {
+        const node = queue.shift()!;
+        level.push(node ? node.data : null);
+        node && queue.push(node.left);
+        node && queue.push(node.right);
+      }
+      res.push(level);
+    }
+    return res;
+  }
+
   public static add(data: number, node: BSTNode) {
     if (data <= node.data) {
       // go to left
@@ -59,16 +76,21 @@ export class BinarySearchTree {
     return false;
   }
 
-  debug() {
-    console.log(JSON.stringify(this.#root));
-  }
-
   public static isValid(root: BSTNode) {
     return BinarySearchTree.isInRange(
       root,
       -Number.MAX_VALUE,
       Number.MAX_VALUE,
     );
+  }
+
+  get height() {
+    return this.getHeight(this.#root);
+  }
+
+  private getHeight(root: BSTNode | null) {
+    if (root === null) return 0;
+    return Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1;
   }
 
   private static isInRange(root: BSTNode | null, min: number, max: number) {
