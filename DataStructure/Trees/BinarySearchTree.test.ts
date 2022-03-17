@@ -8,9 +8,9 @@ describe("BinarySearchTree", () => {
     tree.insert(15);
     tree.insert(21);
     tree.insert(32);
-    tree.debug();
     expect(BinarySearchTree.isValid(tree.root)).toBe(true);
     expect(tree.length).toBe(6);
+    console.log(tree.root.serialize());
   });
 
   test("isValid", () => {
@@ -18,11 +18,12 @@ describe("BinarySearchTree", () => {
     root.left = new BSTNode(6);
     root.right = new BSTNode(15);
     expect(BinarySearchTree.isValid(root)).toBe(false);
-
+    root.serialize();
     root = new BSTNode(5);
     root.left = new BSTNode(4);
     root.right = new BSTNode(15);
     expect(BinarySearchTree.isValid(root)).toBe(true);
+    root.serialize();
   });
 
   test("contains", () => {
@@ -42,5 +43,15 @@ describe("BinarySearchTree", () => {
     expect(tree.contains(1)).toBe(false);
     expect(tree.contains(2)).toBe(false);
     expect(tree.contains(100)).toBe(false);
+  });
+
+  test("height", () => {
+    const tree = new BinarySearchTree(5);
+    tree.insert(4);
+    tree.insert(6);
+    tree.insert(15);
+    tree.insert(21);
+    tree.insert(32);
+    expect(tree.height).toBe(5);
   });
 });
